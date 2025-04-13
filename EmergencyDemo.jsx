@@ -29,47 +29,51 @@ export default function EmergencyDemo() {
   };
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>112 신고 처리 시연</h1>
+    <div style={{ padding: '2rem', fontFamily: 'Segoe UI, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto', backgroundColor: '#ffffff', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1e3a8a' }}>📞 112 신고 처리 시연</h1>
 
-      <div style={{ marginTop: '2rem' }}>
-        <input type="file" onChange={(e) => setAudioFile(e.target.files[0])} />
-        <button onClick={handleSTT} style={btnStyle}>1. STT 처리</button>
-        <div>텍스트: {text}</div>
-      </div>
+        <Section title="1. 음성 파일 업로드 및 STT 처리" onClick={handleSTT} resultLabel="텍스트" result={text}>
+          <input type="file" onChange={(e) => setAudioFile(e.target.files[0])} style={{ marginBottom: '1rem' }} />
+        </Section>
 
-      <div style={{ marginTop: '2rem' }}>
-        <button onClick={handleClassification} style={btnStyle}>2. 신고 유형 분류</button>
-        <div>유형: {type}</div>
-      </div>
+        <Section title="2. 신고 유형 분류" onClick={handleClassification} resultLabel="유형" result={type} />
+        <Section title="3. 키워드 추출" onClick={handleKeywordExtraction}>
+          <div><strong>위치:</strong> {keywords.location}</div>
+          <div><strong>피해자:</strong> {keywords.victim}</div>
+        </Section>
 
-      <div style={{ marginTop: '2rem' }}>
-        <button onClick={handleKeywordExtraction} style={btnStyle}>3. 키워드 추출</button>
-        <div>위치: {keywords.location}</div>
-        <div>피해자: {keywords.victim}</div>
+        <Section title="4. 요약" onClick={handleSummarization} resultLabel="요약" result={summary} />
+        <Section title="5. 대응 매뉴얼 제시" onClick={handleManual} resultLabel="대응 매뉴얼" result={manual} />
       </div>
+    </div>
+  );
+}
 
-      <div style={{ marginTop: '2rem' }}>
-        <button onClick={handleSummarization} style={btnStyle}>4. 요약</button>
-        <div>요약: {summary}</div>
-      </div>
-
-      <div style={{ marginTop: '2rem' }}>
-        <button onClick={handleManual} style={btnStyle}>5. 대응 매뉴얼 제시</button>
-        <div>대응 매뉴얼: {manual}</div>
-      </div>
+function Section({ title, onClick, resultLabel, result, children }) {
+  return (
+    <div style={{ marginBottom: '2rem' }}>
+      <h2 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '0.5rem' }}>{title}</h2>
+      {children}
+      <button onClick={onClick} style={btnStyle}>실행</button>
+      {result !== undefined && result !== "" && (
+        <div style={{ marginTop: '0.75rem', backgroundColor: '#f1f5f9', padding: '1rem', borderRadius: '8px' }}>
+          <strong>{resultLabel}:</strong> {result}
+        </div>
+      )}
     </div>
   );
 }
 
 const btnStyle = {
   marginTop: '0.5rem',
-  padding: '0.5rem 1rem',
+  padding: '0.5rem 1.2rem',
   backgroundColor: '#2563eb',
   color: 'white',
   border: 'none',
-  borderRadius: '6px',
+  borderRadius: '8px',
   cursor: 'pointer',
-  fontSize: '1rem'
+  fontSize: '1rem',
+  boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
 };
 
