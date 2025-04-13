@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
 export default function EmergencyDemo() {
   const [audioFile, setAudioFile] = useState(null);
@@ -10,6 +11,10 @@ export default function EmergencyDemo() {
 
   const handleSTT = async () => {
     setText("도와주세요. 서울 강남에서 강도를 당했어요. 친구가 다쳤어요.");
+    setType("");
+    setKeywords({ location: "", victim: "" });
+    setSummary("");
+    setManual("");
   };
 
   const handleClassification = () => {
@@ -29,51 +34,82 @@ export default function EmergencyDemo() {
   };
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'Segoe UI, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto', backgroundColor: '#ffffff', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1e3a8a' }}>📞 112 신고 처리 시연</h1>
+    <div style={{ padding: '2rem', fontFamily: 'Segoe UI, sans-serif', background: 'radial-gradient(circle, #eef2ff 0%, #dbeafe 100%)', minHeight: '100vh', position: 'relative' }}>
+      <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
+        <line x1="50%" y1="200" x2="20%" y2="400" stroke="#c7d2fe" strokeWidth="2" />
+        <line x1="50%" y1="200" x2="40%" y2="600" stroke="#c7d2fe" strokeWidth="2" />
+        <line x1="50%" y1="200" x2="60%" y2="600" stroke="#c7d2fe" strokeWidth="2" />
+        <line x1="50%" y1="200" x2="80%" y2="400" stroke="#c7d2fe" strokeWidth="2" />
+      </svg>
+      <div style={{ maxWidth: '1100px', margin: '0 auto', backgroundColor: '#ffffffdd', padding: '2rem', borderRadius: '16px', boxShadow: '0 8px 24px rgba(0,0,0,0.1)', zIndex: 1, position: 'relative' }}>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '2rem', color: '#1e3a8a', textAlign: 'center' }}>📞 112 신고 처리 시연</h1>
 
-        <Section title="1. 음성 파일 업로드 및 STT 처리" onClick={handleSTT} resultLabel="텍스트" result={text}>
-          <input type="file" onChange={(e) => setAudioFile(e.target.files[0])} style={{ marginBottom: '1rem' }} />
-        </Section>
+        <motion.div layout style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', justifyContent: 'center' }}>
+          <AnimatedBox title="1. STT 처리" onClick={handleSTT}>
+            <input type="file" onChange={(e) => setAudioFile(e.target.files[0])} style={{ marginBottom: '1rem' }} />
+            {text && <p><strong>텍스트:</strong> {text}</p>}
+          </AnimatedBox>
 
-        <Section title="2. 신고 유형 분류" onClick={handleClassification} resultLabel="유형" result={type} />
-        <Section title="3. 키워드 추출" onClick={handleKeywordExtraction}>
-          <div><strong>위치:</strong> {keywords.location}</div>
-          <div><strong>피해자:</strong> {keywords.victim}</div>
-        </Section>
+          <AnimatedBox title="2. 유형 분류" onClick={handleClassification}>
+            {type && <div className="resultBox"><strong>유형:</strong> {type}</div>}
+          </AnimatedBox>
 
-        <Section title="4. 요약" onClick={handleSummarization} resultLabel="요약" result={summary} />
-        <Section title="5. 대응 매뉴얼 제시" onClick={handleManual} resultLabel="대응 매뉴얼" result={manual} />
+          <AnimatedBox title="3. 키워드 추출" onClick={handleKeywordExtraction}>
+            {(keywords.location || keywords.victim) && (
+              <div className="resultBox">
+                <p><strong>위치:</strong> {keywords.location}</p>
+                <p><strong>피해자:</strong> {keywords.victim}</p>
+              </div>
+            )}
+          </AnimatedBox>
+
+          <AnimatedBox title="4. 요약" onClick={handleSummarization}>
+            {summary && (
+              <div className="resultBox">
+                <p><strong>요약:</strong> {summary}</p>
+                <img src="https://via.placeholder.com/400x200.png?text=요약+시각화" alt="요약 이미지" style={{ marginTop: '1rem', borderRadius: '8px' }} />
+              </div>
+            )}
+          </AnimatedBox>
+
+          <AnimatedBox title="5. 대응 매뉴얼" onClick={handleManual}>
+            {manual && (
+              <div className="resultBox">
+                <p><strong>매뉴얼:</strong> {manual}</p>
+                <img src="https://via.placeholder.com/400x200.png?text=대응+매뉴얼+예시" alt="매뉴얼 이미지" style={{ marginTop: '1rem', borderRadius: '8px' }} />
+              </div>
+            )}
+          </AnimatedBox>
+        </motion.div>
       </div>
     </div>
   );
 }
 
-function Section({ title, onClick, resultLabel, result, children }) {
+function AnimatedBox({ title, onClick, children }) {
   return (
-    <div style={{ marginBottom: '2rem' }}>
-      <h2 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '0.5rem' }}>{title}</h2>
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      style={{ backgroundColor: '#fff', borderRadius: '12px', padding: '1.5rem', width: '420px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', position: 'relative' }}
+    >
+      <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1d4ed8', marginBottom: '1rem' }}>{title}</h2>
       {children}
       <button onClick={onClick} style={btnStyle}>실행</button>
-      {result !== undefined && result !== "" && (
-        <div style={{ marginTop: '0.75rem', backgroundColor: '#f1f5f9', padding: '1rem', borderRadius: '8px' }}>
-          <strong>{resultLabel}:</strong> {result}
-        </div>
-      )}
-    </div>
+    </motion.div>
   );
 }
 
 const btnStyle = {
-  marginTop: '0.5rem',
-  padding: '0.5rem 1.2rem',
+  marginTop: '1rem',
+  padding: '0.6rem 1.2rem',
   backgroundColor: '#2563eb',
   color: 'white',
   border: 'none',
   borderRadius: '8px',
   cursor: 'pointer',
   fontSize: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+  boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
 };
 
