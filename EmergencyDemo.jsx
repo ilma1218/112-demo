@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 export default function EmergencyDemo() {
   const [text, setText] = useState("");
-  const [type, setType] = useState("");
+  // const [type, setType] = useState(""); // removed unused state
   const [keywords, setKeywords] = useState({ location: "", victim: "" });
   const [summary, setSummary] = useState("");
   const [manual, setManual] = useState("");
@@ -14,7 +14,7 @@ export default function EmergencyDemo() {
       setText("전 남자친구가 방망이로 계속 두드려요");
       setTimeout(() => setKeywords({ location: "신고자 주거지 또는 인근", victim: "신고자 본인" }), 1000);
       setTimeout(() => setSummary("신고자가 전 남자친구로부터 위협을 받고 있으며, 물리적 폭력 가능성이 높은 상황임."), 2000);
-      setTimeout(() => setType("데이트 폭력"), 3000);
+      // setTimeout(() => setType("데이트 폭력"), 3000); // removed unused call
       setTimeout(() => setManual("즉시 출동하여 가해자 격리 조치, 피해자 안전 확인 및 긴급 보호소 연계 여부 검토."), 4000);
     }
   }, [trigger]);
