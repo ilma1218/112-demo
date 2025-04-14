@@ -1,31 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 export default function EmergencyDemo() {
   const [text, setText] = useState("");
-  // const [type, setType] = useState(""); // removed unused state
   const [keywords, setKeywords] = useState({ location: "", victim: "" });
   const [summary, setSummary] = useState("");
   const [manual, setManual] = useState("");
-  const [trigger, setTrigger] = useState(false);
 
   useEffect(() => {
-    if (trigger) {
-      setText("전 남자친구가 방망이로 계속 두드려요");
-      setTimeout(() => setKeywords({ location: "신고자 주거지 또는 인근", victim: "신고자 본인" }), 1000);
-      setTimeout(() => setSummary("신고자가 전 남자친구로부터 위협을 받고 있으며, 물리적 폭력 가능성이 높은 상황임."), 2000);
-      // setTimeout(() => setType("데이트 폭력"), 3000); // removed unused call
-      setTimeout(() => setManual("즉시 출동하여 가해자 격리 조치, 피해자 안전 확인 및 긴급 보호소 연계 여부 검토."), 4000);
-    }
-  }, [trigger]);
+    // 자동 흐름 시작
+    setTimeout(() => setText("전 남자친구가 방망이로 계속 두드려요"), 500);
+    setTimeout(() => setKeywords({ location: "신고자 주거지 또는 인근", victim: "신고자 본인" }), 1500);
+    setTimeout(() => setSummary("신고자가 전 남자친구로부터 위협을 받고 있으며, 물리적 폭력 가능성이 높은 상황임."), 2500);
+    setTimeout(() => setManual("즉시 출동하여 가해자 격리 조치, 피해자 안전 확인 및 긴급 보호소 연계 여부 검토."), 3500);
+  }, []);
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'Segoe UI, sans-serif', background: '#f9fafb', minHeight: '100vh' }}>
-      <h1 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '2rem' }}>📞 112 신고 처리 시각화</h1>
+      <h1 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '2rem' }}>📞 112 신고 처리 흐름 시각화</h1>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', overflowX: 'auto' }}>
-        <StageBox delay={0} title="1. STT 처리" trigger={trigger}>
-          <button onClick={() => setTrigger(true)} style={btnStyle}>신고 접수 시작</button>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '2rem', overflowX: 'auto', paddingBottom: '2rem' }}>
+        <StageBox delay={0} title="1. STT 처리">
+          <p>음성 인식 완료</p>
         </StageBox>
 
         <StageBox delay={1} title="2. 문장 출력" trigger={text !== ""}>
@@ -43,17 +39,17 @@ export default function EmergencyDemo() {
 
         <StageBox delay={4} title="5. 대응 매뉴얼" trigger={manual !== ""}>
           <p>{manual}</p>
-          <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="문서" style={{ width: '100%', maxWidth: '200px', marginTop: '1rem' }} />
+          <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="문서 예시" style={{ width: '100%', maxWidth: '200px', marginTop: '1rem' }} />
         </StageBox>
       </div>
     </div>
   );
 }
 
-function StageBox({ title, children, trigger, delay }) {
+function StageBox({ title, children, trigger = true, delay = 0 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={trigger ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8, delay: delay }}
       style={{ minWidth: '220px', background: '#fff', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 4px 10px rgba(0,0,0,0.1)', flexShrink: 0 }}
@@ -63,14 +59,3 @@ function StageBox({ title, children, trigger, delay }) {
     </motion.div>
   );
 }
-
-const btnStyle = {
-  padding: '0.5rem 1rem',
-  backgroundColor: '#2563eb',
-  color: 'white',
-  border: 'none',
-  borderRadius: '6px',
-  cursor: 'pointer',
-  fontSize: '1rem'
-};
-
