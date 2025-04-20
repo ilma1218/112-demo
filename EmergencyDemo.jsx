@@ -41,21 +41,38 @@ function Arrow({ active }) {
   );
 }
 
+const steps = [
+  {
+    label: "Menu",
+    description: "사용자의 질문을 분석하고 필요한 카테고리(예: 보고서, 게시물)를 판단합니다."
+  },
+  {
+    label: "컨텐츠",
+    description: "질문에 맞는 콘텐츠 유형을 선택하고 적절한 쿼리로 Vector DB에 검색을 수행합니다."
+  },
+  {
+    label: "게시물",
+    description: "검색된 문서들에서 핵심 정보를 추출하고 질문과 관련된 내용을 정리합니다."
+  },
+  {
+    label: "공지사항",
+    description: "단계별 정보를 통합하여 사용자에게 전달할 최종 응답을 생성합니다."
+  }
+];
+
 export default function ChainOfThoughtDemo() {
   const [question, setQuestion] = useState("");
   const [currentStep, setCurrentStep] = useState(-1);
   const [running, setRunning] = useState(false);
 
-  const labels = ["Menu", "컨텐츠", "게시물", "공지사항"];
-
   const handleDemo = () => {
     setCurrentStep(-1);
     setRunning(true);
-    labels.forEach((_, i) => {
+    steps.forEach((_, i) => {
       setTimeout(() => {
         setCurrentStep(i);
-        if (i === labels.length - 1) setRunning(false);
-      }, 800 * (i + 1));
+        if (i === steps.length - 1) setRunning(false);
+      }, 1000 * (i + 1));
     });
   };
 
@@ -74,18 +91,23 @@ export default function ChainOfThoughtDemo() {
       </Button>
 
       <div className="flex items-center justify-center mt-10">
-        {labels.map((label, idx) => (
+        {steps.map((step, idx) => (
           <React.Fragment key={idx}>
-            <CircleNode label={label} active={idx === currentStep} />
-            {idx < labels.length - 1 && <Arrow active={idx < currentStep} />}
+            <CircleNode label={step.label} active={idx === currentStep} />
+            {idx < steps.length - 1 && <Arrow active={idx < currentStep} />}
           </React.Fragment>
         ))}
       </div>
 
       {currentStep >= 0 && (
-        <p className="text-center text-lg font-medium text-gray-800 mt-6">
-          현재 단계: <span className="text-red-600">{labels[currentStep]}</span>
-        </p>
+        <div className="text-center mt-6 transition-all duration-500">
+          <p className="text-lg font-medium text-gray-800">
+            현재 단계: <span className="text-red-600">{steps[currentStep].label}</span>
+          </p>
+          <p className="mt-2 text-sm text-gray-600 max-w-xl mx-auto">
+            {steps[currentStep].description}
+          </p>
+        </div>
       )}
     </div>
   );
