@@ -1,4 +1,17 @@
 import React, { useState } from "react";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 // 기본 컴포넌트 정의
 function Input({ value, onChange, placeholder }) {
@@ -63,8 +76,46 @@ export default function ChainOfThoughtDemo() {
     setSteps(simulatedSteps);
   };
 
+  const chartData = {
+    labels: ["2021", "2022", "2023"],
+    datasets: [
+      {
+        label: "정부 지원 트렌드",
+        data: [1, 2, 3],
+        fill: false,
+        borderColor: "#3b82f6",
+        tension: 0.3
+      }
+    ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "top" },
+      title: { display: true, text: "정부 지원 트렌드 (2021–2023)" }
+    },
+    scales: {
+      y: {
+        ticks: {
+          callback: (value) => {
+            switch (value) {
+              case 1: return "인프라";
+              case 2: return "데이터";
+              case 3: return "AI 자동제어";
+              default: return value;
+            }
+          },
+          stepSize: 1,
+          min: 1,
+          max: 3
+        }
+      }
+    }
+  };
+
   return (
-    <div className="max-w-3xl mx-auto p-4 space-y-4">
+    <div className="max-w-3xl mx-auto p-4 space-y-6">
       <h1 className="text-2xl font-bold">Chain of Thought 기반 통합검색 데모</h1>
 
       <Input
@@ -77,6 +128,11 @@ export default function ChainOfThoughtDemo() {
 
       {steps.length > 0 && (
         <div className="space-y-4 mt-6">
+          <Card>
+            <CardContent>
+              <Line data={chartData} options={chartOptions} />
+            </CardContent>
+          </Card>
           {steps.map((step, index) => (
             <Card key={index}>
               <CardContent className="p-4">
