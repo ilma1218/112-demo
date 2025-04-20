@@ -1,17 +1,4 @@
 import React, { useState } from "react";
-import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 // 기본 컴포넌트 정의
 function Input({ value, onChange, placeholder }) {
@@ -37,9 +24,11 @@ function Button({ onClick, children, className }) {
   );
 }
 
-function Card({ children }) {
+function Card({ children, highlight }) {
   return (
-    <div className="border rounded-xl shadow-sm bg-white">
+    <div
+      className={`border rounded-xl shadow-sm bg-white transition-all duration-500 ease-in-out ${highlight ? "border-blue-600 shadow-md scale-105" : ""}`}
+    >
       {children}
     </div>
   );
@@ -52,6 +41,7 @@ function CardContent({ children, className }) {
 export default function ChainOfThoughtDemo() {
   const [question, setQuestion] = useState("");
   const [steps, setSteps] = useState([]);
+  const [currentStep, setCurrentStep] = useState(-1);
 
   const handleDemo = () => {
     const simulatedSteps = [
@@ -73,45 +63,16 @@ export default function ChainOfThoughtDemo() {
       }
     ];
 
-    setSteps(simulatedSteps);
-  };
+    setSteps([]);
+    setCurrentStep(-1);
 
-  const chartData = {
-    labels: ["2021", "2022", "2023"],
-    datasets: [
-      {
-        label: "정부 지원 트렌드",
-        data: [1, 2, 3],
-        fill: false,
-        borderColor: "#3b82f6",
-        tension: 0.3
-      }
-    ]
-  };
-
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: { position: "top" },
-      title: { display: true, text: "정부 지원 트렌드 (2021–2023)" }
-    },
-    scales: {
-      y: {
-        ticks: {
-          callback: (value) => {
-            switch (value) {
-              case 1: return "인프라";
-              case 2: return "데이터";
-              case 3: return "AI 자동제어";
-              default: return value;
-            }
-          },
-          stepSize: 1,
-          min: 1,
-          max: 3
-        }
-      }
-    }
+    // Chain of Thought 시각적 순차 실행
+    simulatedSteps.forEach((step, i) => {
+      setTimeout(() => {
+        setSteps((prev) => [...prev, step]);
+        setCurrentStep(i);
+      }, 800 * (i + 1));
+    });
   };
 
   return (
@@ -128,13 +89,8 @@ export default function ChainOfThoughtDemo() {
 
       {steps.length > 0 && (
         <div className="space-y-4 mt-6">
-          <Card>
-            <CardContent>
-              <Line data={chartData} options={chartOptions} />
-            </CardContent>
-          </Card>
           {steps.map((step, index) => (
-            <Card key={index}>
+            <Card key={index} highlight={index === currentStep}>
               <CardContent className="p-4">
                 <h2 className="font-semibold text-lg mb-1">{step.title}</h2>
                 <p>{step.text}</p>
