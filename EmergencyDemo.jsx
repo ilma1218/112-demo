@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // 기본 컴포넌트 정의
 function Input({ value, onChange, placeholder }) {
@@ -28,27 +28,34 @@ function CircleNode({ label, active }) {
   return (
     <div
       className={`w-28 h-28 flex items-center justify-center text-white text-sm font-semibold rounded-full transition-all duration-500 shadow-md
-        ${active ? "bg-red-600 scale-110" : "bg-sky-800"}`}
+        ${active ? "bg-red-600 scale-110 ring-4 ring-red-300" : "bg-sky-800 opacity-60"}`}
     >
       {label}
     </div>
   );
 }
 
-function Arrow() {
-  return <div className="w-10 h-px bg-sky-600 mx-2" />;
+function Arrow({ active }) {
+  return (
+    <div className={`w-10 h-px mx-2 transition-all duration-500 ${active ? "bg-red-400" : "bg-sky-600"}`} />
+  );
 }
 
 export default function ChainOfThoughtDemo() {
   const [question, setQuestion] = useState("");
   const [currentStep, setCurrentStep] = useState(-1);
+  const [running, setRunning] = useState(false);
 
   const labels = ["Menu", "컨텐츠", "게시물", "공지사항"];
 
   const handleDemo = () => {
     setCurrentStep(-1);
+    setRunning(true);
     labels.forEach((_, i) => {
-      setTimeout(() => setCurrentStep(i), 800 * (i + 1));
+      setTimeout(() => {
+        setCurrentStep(i);
+        if (i === labels.length - 1) setRunning(false);
+      }, 800 * (i + 1));
     });
   };
 
@@ -62,16 +69,24 @@ export default function ChainOfThoughtDemo() {
         onChange={(e) => setQuestion(e.target.value)}
       />
 
-      <Button onClick={handleDemo} className="mt-2">Chain 흐름 시작</Button>
+      <Button onClick={handleDemo} className="mt-2" disabled={running}>
+        {running ? "진행 중..." : "Chain 흐름 시작"}
+      </Button>
 
       <div className="flex items-center justify-center mt-10">
         {labels.map((label, idx) => (
           <React.Fragment key={idx}>
             <CircleNode label={label} active={idx === currentStep} />
-            {idx < labels.length - 1 && <Arrow />}
+            {idx < labels.length - 1 && <Arrow active={idx < currentStep} />}
           </React.Fragment>
         ))}
       </div>
+
+      {currentStep >= 0 && (
+        <p className="text-center text-lg font-medium text-gray-800 mt-6">
+          현재 단계: <span className="text-red-600">{labels[currentStep]}</span>
+        </p>
+      )}
     </div>
   );
 }
